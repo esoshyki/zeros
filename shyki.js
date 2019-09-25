@@ -2,49 +2,74 @@ const exp = '11!!*22!!*33!!'
 
 function zeros(expression) {
 
-    const find = (exp) => {
-        let num = parseInt(exp);
-        let zeroCounter = 0;
-        let step = 1;
-        while (5 ** step <= num) {
-            zeroCounter += Math.floor(num / (5 ** step ));
-            step += 1;
-       }
-       console.log(zeroCounter)
-       return zeroCounter
-    }
+    let two_count = 0; let five_count = 0;
 
-    const findDouble = (exp) => {
-        let num = parseInt(exp);
-        let zeroCounter = 0;
-        let step = 1;
-        if (num%2 === 1) { 
+    const find = (num, method) => {
+        const two_find = () => {
+            let step = 1;
+            while (2 ** step <= num) {
+                two_count += Math.floor( num / 2 ** step);
+                step ++
+            }
+        }
+        console.log(typeof num)
+        const five_find = () => {
+            let step = 1;
             while (5 ** step <= num) {
-                for (let i = 5 * step; i<= num; i+= 10 * step) {
-                    console.log(`i = ${i}`)
-                    zeroCounter += 1
+                five_count += Math.floor( num / 5 ** step)
+                step ++
+            }
+        }
+
+        const find_half = () => {
+            let step = 1; 
+            console.log(`num = ${num}`)
+            while (5 ** step <= num) {
+                let num_here = num;
+                console.log(num)
+                while (num_here > 0) {
+                    if (num_here % (5 ** step) === 0) {
+                        five_count += 1;
+                    }
+                    num_here -= 2;
+                    console.log(num)
                 }
-                step += 1;
-           }
+                step += 1
+            }
+
+            step = 1;
+            while (2 ** step < num) {
+                let num_here = num;
+                while (num_here > 0) {
+                    if (num_here % (2 ** step) === 0) {
+                        two_count += 1;
+                    }
+                    num_here -= 2;
+                }
+                step += 1
+            }
         }
-        else {
-            while (10 ** step <= num) {
-                zeroCounter += Math.floor(num / (10 ** step ));
-                step += 1;
-           }
+
+        if (method === 1) {
+            two_find()
+            five_find()
         }
-        console.log(zeroCounter)
-        return zeroCounter
+
+        if (method === 2) {
+            find_half()
+        }
+        console.log(`five_count = ${five_count} two_count = ${two_count}`)
     }
 
     const arr = expression.split('*');
+
     const once = arr.filter(el => el.match(/\d+!{1}$/)).map(el => el.replace('!',''))
     const double = arr.filter(el => el.match(/\d+!{2}$/)).map(el => el.replace('!!',''));
-    let answer = 0
-    once.forEach(el => answer += find(el));
-    double.forEach(el => answer += findDouble(el));
-    console.log(answer)
-    return answer
+
+    once.forEach(el => find(parseInt(el), 1));
+    double.forEach(el => find(parseInt(el), 2));
+    console.log(`two_count = ${two_count} five_count = ${five_count}`)
+    return Math.min(two_count, five_count)
 }
 
-(zeros(exp))
+console.log(zeros(exp))
